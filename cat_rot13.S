@@ -6,7 +6,47 @@
 
 .text
 
-.global cat
+.type rot13, @function
+
+rot13:
+    movl %edi, %ebx
+    movl %ebx, %eax
+.Lrot_upper:
+    cmpl  $65, %ebx #A
+    jl .Lrot_lower
+    cmpl $90, %ebx #Z
+    jg .Lrot_lower
+
+    movl %ebx, %eax
+    addl $13, %eax
+    cmpl $90, %eax
+    jle .Lrot_quit
+    subl $13, %ebx
+    movl %ebx, %eax
+    jmp .Lrot_quit
+
+.Lrot_lower:
+    cmpl $97, %ebx #a
+    jl .Lrot_quit
+    cmpl $122, %ebx #z
+    jg .Lrot_quit
+
+    movl %ebx, %eax
+    addl $13, %eax
+    cmpl $122, %eax
+    jle .Lrot_quit
+    subl $13, %ebx
+    movl %ebx, %eax
+
+.Lrot_quit:
+    movl %eax, %edi
+    call putchar@plt
+    nop
+    ret
+
+.size rot13, .-rot13
+
+
 .type cat, @function
 
 cat:
@@ -28,7 +68,7 @@ cat:
     cmpb $-1, %al #check for EOF
     je .Lcat_quit
     movsbl %al, %edi
-    call putchar@plt
+    call rot13@plt
     jmp .Lcat_loop
 
 .Lcat_err:
@@ -42,6 +82,7 @@ cat:
     ret
 
 .size cat, .-cat
+
 
 .global main
 .type main, @function
