@@ -1,7 +1,7 @@
 CC=gcc
 CFLAGS=-Wall -Werror -Wextra -pedantic -g
 SRC=cat_rot13.S
-OBJ=$(SRC:.c=.o)
+OBJ=$(SRC:.S=.o)
 BIN=cat
 
 all: create_obj create_bin
